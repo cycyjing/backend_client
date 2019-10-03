@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, } from 'antd';
 import './login.less'
 import logo from '../../images/login/logo.png'
 class Login extends Component {
@@ -8,7 +8,29 @@ class Login extends Component {
     e.preventDefault();
     const params = getFieldsValue()
     console.log(params)
-  };
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        //ajax
+        if (values.username === 'aaaa')
+          this.props.form.setFields({
+            username: {
+              value: values.username,
+              errors:[new Error('Username is not exist')]
+            }
+          })
+      } else {
+        console.log(err);
+      }
+    })
+  }
+  validatorPws = (rules, value, callback) => {
+    console.log(value + '----------------');
+    if (!/^[a-zA-Z0-9]+$/.test(value)) {
+      callback('Please input password with letter, number and under dash')
+    } else {
+      callback()
+    }
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -23,11 +45,12 @@ class Login extends Component {
             <Form.Item>
               {getFieldDecorator('username', {
                 rules: [
-                  {required:true,message:'Please input username'},
-                  {min:4,message:'Please input username at least 4 characters'},
-                  {max:12,message:'Please input username no more than 12 characters'},
-                  {pattern:/^[a-zA-Z0-9]+$/,message:'Please input username with letter, number and under dash'},
-                ]
+                  { required: true, message: 'Please input username' },
+                  { min: 4, message: 'Please input username at least 4 characters' },
+                  { max: 12, message: 'Please input username no more than 12 characters' },
+                  { pattern: /^[a-zA-Z0-9]+$/, message: 'Please input username with letter, number and under dash' },
+                ],
+                // initialValue:'aaaa'
               })(
                 <Input
                   prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -36,11 +59,12 @@ class Login extends Component {
               )}
             </Form.Item>
             <Form.Item>
-              {getFieldDecorator('password',{
-                rules:[
-                  {required:true,message:'Please input password'},
-                  {min:6,message:'Please input password at least 6 characters'},
-                  {max:20,message:'Please input password no more than 20 characters'},
+              {getFieldDecorator('password', {
+                rules: [
+                  { required: true, message: 'Please input password' },
+                  { min: 6, message: 'Please input password at least 6 characters' },
+                  { max: 20, message: 'Please input password no more than 20 characters' },
+                  { validator: this.validatorPws }
                 ]
               })(
                 <Input
